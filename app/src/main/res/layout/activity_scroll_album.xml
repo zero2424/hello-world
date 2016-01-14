@@ -1,0 +1,23 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ScrollAlbumActivity">
+
+    <com.example.kaizhang.kaiapplication.view.CustomHorizontalScrollView
+        android:id="@+id/album_scrollview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:scrollbars="none">
+
+        <com.example.kaizhang.kaiapplication.view.OnstarAlbum
+            android:id="@+id/album"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:layout_centerInParent="true"
+            android:orientation="horizontal" />
+    </com.example.kaizhang.kaiapplication.view.CustomHorizontalScrollView>
+
+
+</RelativeLayout>

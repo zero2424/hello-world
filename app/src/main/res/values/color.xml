@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="charge_percentage_circle_1">#2a3541</color>
+    <color name="charge_percentage_circle_2">#345885</color>
+    <color name="charge_percentage_circle_3">#1e6cff</color>
+    <color name="charge_percentage_circle_4">#3d3f49</color>
+    <color name="charge_percentage_circle_5">#611e6cff</color>
+
+</resources>

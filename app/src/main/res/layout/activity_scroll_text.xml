@@ -1,0 +1,48 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#005555"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".ScrollTextActivity">
+
+    <com.example.kaizhang.kaiapplication.view.MultiPartSwitcher
+        android:id="@+id/switcher"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:layout_centerInParent="true"
+        android:orientation="horizontal" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/switcher"
+        android:layout_alignTop="@id/switcher"
+        android:background="@drawable/scroll_text_gradient_drawable" />
+
+    <Button
+        android:id="@+id/es_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/switcher"
+        android:layout_marginTop="20dp"
+        android:text="enable/disable scroll" />
+
+    <Button
+        android:id="@+id/sm_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/switcher"
+        android:layout_marginTop="20dp"
+        android:layout_toRightOf="@id/es_btn"
+        android:text="修改第二项的title文本" />
+
+    <Button
+        android:id="@+id/ec_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/es_btn"
+        android:layout_marginTop="20dp"
+        android:text="enable/disable cyclic" />
+</RelativeLayout>

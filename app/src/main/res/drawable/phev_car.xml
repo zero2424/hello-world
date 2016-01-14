@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:oneshot="false"
+
+    >
+    <item
+        android:drawable="@drawable/onstar_charge_status_frame1"
+        android:duration="150" />
+    <item
+        android:drawable="@drawable/onstar_charge_status_frame2"
+        android:duration="150" />
+    <item
+        android:drawable="@drawable/onstar_charge_status_frame3"
+        android:duration="150" />
+    <item
+        android:drawable="@drawable/onstar_charge_status_frame4"
+        android:duration="150" />
+    <item
+        android:drawable="@drawable/onstar_charge_status_frame5"
+        android:duration="150" />
+    <item
+        android:drawable="@drawable/onstar_charge_status_frame6"
+        android:duration="150" />
+    <item
+        android:drawable="@drawable/onstar_charge_status_frame7"
+        android:duration="150" />
+    <item
+        android:drawable="@drawable/onstar_charge_status_frame8"
+        android:duration="150" />
+    <item
+        android:drawable="@drawable/onstar_charge_status_frame9"
+        android:duration="150" />
+    <item
+        android:drawable="@drawable/onstar_charge_status_frame10"
+        android:duration="150" />
+    <item
+        android:drawable="@drawable/onstar_charge_status_frame11"
+        android:duration="150" />
+    <item
+        android:drawable="@drawable/onstar_charge_status_frame12"
+        android:duration="150" />
+    <item
+        android:drawable="@drawable/onstar_charge_status_frame13"
+        android:duration="150" />
+    <item
+        android:drawable="@drawable/onstar_charge_status_frame14"
+        android:duration="150" />
+    <item
+        android:drawable="@drawable/onstar_charge_status_frame15"
+        android:duration="150" />
+</animation-list>

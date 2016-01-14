@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.example.kaizhang.kaiapplication.layout.DragLayer xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/draglayer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    android:splitMotionEvents="false">
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.example.kaizhang.kaiapplication.layout.FunctionListLayout
+            android:id="@+id/functionlistlayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </ScrollView>
+
+    <com.example.kaizhang.kaiapplication.layout.Hotseat
+        android:id="@+id/hotseat"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</com.example.kaizhang.kaiapplication.layout.DragLayer>
