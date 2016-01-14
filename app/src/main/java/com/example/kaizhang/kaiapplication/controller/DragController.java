@@ -165,6 +165,7 @@ public class DragController {
         mDragLayer.getLocationInDragLayer(v, loc);
         Bitmap bitmap = Utilities.getBitmapFromView(v);
         mDragObject.dragView = new DragView(mDragLayer, bitmap, loc[0] + v.getWidth() / 2, loc[1] + v.getHeight() / 2, 0, 0, bitmap.getWidth(), bitmap.getHeight(), 1);
+        mDragObject.dragView.setTag(System.currentTimeMillis());
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(v.getLayoutParams());
         FrameLayout.LayoutParams originalLayoutParams = (FrameLayout.LayoutParams) v.getLayoutParams();
         layoutParams.setMargins(originalLayoutParams.leftMargin, originalLayoutParams.topMargin - scrollY, originalLayoutParams.rightMargin, originalLayoutParams.bottomMargin);

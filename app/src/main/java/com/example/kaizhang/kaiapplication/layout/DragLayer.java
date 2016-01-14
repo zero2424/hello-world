@@ -228,7 +228,18 @@ public class DragLayer extends FrameLayout {
                 }
             }
         };
-        if (fromX != 0 || fromY != 0) {
+
+        boolean fixPosition = false;
+        if (dragView.getTag() != null) {
+            long curTime = System.currentTimeMillis();
+            long dragTime = (long) dragView.getTag();
+            if (curTime - dragTime < 40) {
+                fixPosition = true;
+            }
+        } else if (fromX == 0 && fromY == 0) {
+            fixPosition = true;
+        }
+        if (!fixPosition) {
             fromX -= ((FrameLayout.LayoutParams) child.getLayoutParams()).leftMargin;
             fromY -= ((FrameLayout.LayoutParams) child.getLayoutParams()).topMargin;
         }
@@ -240,7 +251,7 @@ public class DragLayer extends FrameLayout {
         if (child.getParent().getParent() instanceof ScrollView) {
             ScrollView scrollView = (ScrollView) child.getParent().getParent();
             int scrollY = scrollView.getScrollY();
-            if (fromX != 0 || fromY != 0) {
+            if (!fixPosition) {
                 fromY += scrollY;
             }
             toY += scrollY;
