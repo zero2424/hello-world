@@ -533,16 +533,30 @@ public class DragController {
         mDragObject.dragSource.onDropCompleted((View) dropTarget, mDragObject, false, accepted);
     }
 
-    private void click(float x, float y) {
-        final int[] coordinates = mCoordinatesTemp;
-        final DropTarget dropTarget = findDropTarget((int) x, (int) y, coordinates);
-
-        mDragObject.x = coordinates[0];
-        mDragObject.y = coordinates[1];
-        if (dropTarget != null) {
-            dropTarget.onDragExit(mDragObject);
-            dropTarget.onClick(mDragObject);
+    public void quickMove(View v, DragSource dragSource, DropTarget dropTarget, Object dragInfo) {
+        mDragObject = new DropTarget.DragObject();
+        mDragObject.dragSource = dragSource;
+        mDragObject.dragInfo = dragInfo;
+        int scrollY = 0;
+        if (v.getParent().getParent() instanceof ScrollView) {
+            ScrollView scrollView = (ScrollView) v.getParent().getParent();
+            scrollY = scrollView.getScrollY();
         }
+        int[] loc = mCoordinatesTemp;
+        mDragLayer.getLocationInDragLayer(v, loc);
+        Bitmap bitmap = Utilities.getBitmapFromView(v);
+        mDragObject.dragView = new DragView(mDragLayer, bitmap, loc[0] + v.getWidth() / 2, loc[1] + v.getHeight() / 2, 0, 0, bitmap.getWidth(), bitmap.getHeight(), 1);
+        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(v.getLayoutParams());
+        FrameLayout.LayoutParams originalLayoutParams = (FrameLayout.LayoutParams) v.getLayoutParams();
+        layoutParams.setMargins(originalLayoutParams.leftMargin, originalLayoutParams.topMargin - scrollY, originalLayoutParams.rightMargin, originalLayoutParams.bottomMargin);
+        v.setVisibility(View.INVISIBLE);
+        mDragLayer.addView(mDragObject.dragView, layoutParams);
+        boolean accepted = false;
+        if (dropTarget.acceptDrop(mDragObject)) {
+            dropTarget.onDrop(mDragObject);
+            accepted = true;
+        }
+        dragSource.onDropCompleted((View) dropTarget, mDragObject, false, accepted);
     }
 
     private DropTarget findDropTarget(int x, int y, int[] dropCoordinates) {

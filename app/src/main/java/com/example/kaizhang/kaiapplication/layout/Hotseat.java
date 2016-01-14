@@ -215,6 +215,11 @@ public class Hotseat extends FrameLayout implements DropTarget, DragSource, Drag
     }
 
     @Override
+    public void onClick(DragObject dragObject) {
+
+    }
+
+    @Override
     public void onDragEnter(DragObject dragObject) {
 
     }

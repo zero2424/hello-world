@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -183,7 +184,7 @@ public class DragLayer extends FrameLayout {
         FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) child.getLayoutParams();
         Rect r = new Rect();
         getViewRectRelativeToSelf(dragView, r);
-
+        Log.i("zk", "r.left=" + r.left + ",r.top=" + r.top);
         int coord[] = new int[2];
         float childScale = child.getScaleX();
         coord[0] = lp.leftMargin + (int) (child.getMeasuredWidth() * (1 - childScale) / 2);
@@ -227,8 +228,10 @@ public class DragLayer extends FrameLayout {
                 }
             }
         };
-        fromX -= ((FrameLayout.LayoutParams) child.getLayoutParams()).leftMargin;
-        fromY -= ((FrameLayout.LayoutParams) child.getLayoutParams()).topMargin;
+        if (fromX != 0 || fromY != 0) {
+            fromX -= ((FrameLayout.LayoutParams) child.getLayoutParams()).leftMargin;
+            fromY -= ((FrameLayout.LayoutParams) child.getLayoutParams()).topMargin;
+        }
         toX -= ((FrameLayout.LayoutParams) child.getLayoutParams()).leftMargin;
         toY -= ((FrameLayout.LayoutParams) child.getLayoutParams()).topMargin;
 
@@ -237,7 +240,9 @@ public class DragLayer extends FrameLayout {
         if (child.getParent().getParent() instanceof ScrollView) {
             ScrollView scrollView = (ScrollView) child.getParent().getParent();
             int scrollY = scrollView.getScrollY();
-            fromY += scrollY;
+            if (fromX != 0 || fromY != 0) {
+                fromY += scrollY;
+            }
             toY += scrollY;
             if (targetChild != child) {
                 toY += scrollY;

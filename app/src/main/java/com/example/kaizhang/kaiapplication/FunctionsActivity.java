@@ -2,7 +2,6 @@ package com.example.kaizhang.kaiapplication;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 
 import com.example.kaizhang.kaiapplication.controller.DragController;
@@ -80,10 +79,11 @@ public class FunctionsActivity extends Activity implements View.OnLongClickListe
 
     @Override
     public void onClick(View v) {
-        Log.i("zk", "onClick v=" + v);
-        if (v instanceof BubbleButton) {
+        if (!mDragController.isDragging() && v instanceof BubbleButton) {
             if (!((BubbleButton) v).hasPerformedLongPress()) {
-
+                if (((BubbleButton) v).getBelongTo() == BubbleButton.BelongTo.FunctionList) {
+                    mDragController.quickMove(v, functionListLayout, mHotseat, v.getTag());
+                }
             }
         }
     }

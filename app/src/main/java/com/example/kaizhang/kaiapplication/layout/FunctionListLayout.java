@@ -260,6 +260,11 @@ public class FunctionListLayout extends FrameLayout implements DropTarget, DragS
     }
 
     @Override
+    public void onClick(DragObject dragObject) {
+
+    }
+
+    @Override
     public void onDragEnter(DragObject dragObject) {
 
     }
