@@ -95,8 +95,6 @@ public interface DropTarget {
      */
     void onDrop(DragObject dragObject);
 
-    void onClick(DragObject dragObject);
-
     void onDragEnter(DragObject dragObject);
 
     void onDragOver(DragObject dragObject);

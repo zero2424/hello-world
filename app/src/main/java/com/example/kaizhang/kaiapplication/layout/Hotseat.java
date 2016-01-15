@@ -36,6 +36,7 @@ public class Hotseat extends FrameLayout implements DropTarget, DragSource, Drag
     private OnLongClickListener mOnLongClickListener;
     private OnClickListener mOnClickListener;
     private DragLayer mDragLayer;
+    private boolean deleteMode;
 
     public Hotseat(Context context) {
         this(context, null);
@@ -127,10 +128,18 @@ public class Hotseat extends FrameLayout implements DropTarget, DragSource, Drag
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getY() <= startH) {
+            if (deleteMode) {
+                dimissDeleteMode();
+                return true;
+            }
             return false;
         } else {
             return super.onTouchEvent(event);
         }
+    }
+
+    private void dimissDeleteMode() {
+        deleteMode = false;
     }
 
     @Override
@@ -215,23 +224,15 @@ public class Hotseat extends FrameLayout implements DropTarget, DragSource, Drag
     }
 
     @Override
-    public void onClick(DragObject dragObject) {
-
-    }
-
-    @Override
     public void onDragEnter(DragObject dragObject) {
-
     }
 
     @Override
     public void onDragOver(DragObject dragObject) {
-
     }
 
     @Override
     public void onDragExit(DragObject dragObject) {
-
     }
 
     @Override
