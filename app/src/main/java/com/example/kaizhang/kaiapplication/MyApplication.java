@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.pm.PackageManager;
 
 import com.alipay.euler.andfix.patch.PatchManager;
+import com.example.kaizhang.kaiapplication.utils.Utilities;
 
 import java.io.IOException;
 
@@ -23,9 +24,10 @@ public class MyApplication extends Application {
             e.printStackTrace();
         }
         patchManager.loadPatch();
+        Utilities.initStatics(this);
     }
 
-    public void addPatch(String path){
+    public void addPatch(String path) {
         try {
             patchManager.addPatch(path);
         } catch (IOException e) {

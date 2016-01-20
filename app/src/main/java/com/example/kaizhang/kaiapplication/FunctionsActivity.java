@@ -6,7 +6,7 @@ import android.view.View;
 
 import com.example.kaizhang.kaiapplication.controller.DragController;
 import com.example.kaizhang.kaiapplication.database.DatabaseHelper;
-import com.example.kaizhang.kaiapplication.drag_interface.BubbleButton;
+import com.example.kaizhang.kaiapplication.drag_interface.widget.BubbleTextView;
 import com.example.kaizhang.kaiapplication.layout.DragLayer;
 import com.example.kaizhang.kaiapplication.layout.FunctionListLayout;
 import com.example.kaizhang.kaiapplication.layout.Hotseat;
@@ -65,10 +65,10 @@ public class FunctionsActivity extends Activity implements View.OnLongClickListe
     @Override
     public boolean onLongClick(View v) {
         if (!mDragController.isDragging()) {
-            if (v instanceof BubbleButton) {
-                if (((BubbleButton) v).getBelongTo() == BubbleButton.BelongTo.Hotseat) {
+            if (v instanceof BubbleTextView) {
+                if (((BubbleTextView) v).getBelongTo() == BubbleTextView.BelongTo.Hotseat) {
                     mDragController.startDrag(v, mHotseat, v.getTag());
-                } else if (((BubbleButton) v).getBelongTo() == BubbleButton.BelongTo.FunctionList) {
+                } else if (((BubbleTextView) v).getBelongTo() == BubbleTextView.BelongTo.FunctionList) {
                     mDragController.startDrag(v, functionListLayout, v.getTag());
                 }
             }
@@ -79,9 +79,9 @@ public class FunctionsActivity extends Activity implements View.OnLongClickListe
 
     @Override
     public void onClick(View v) {
-        if (!mDragController.isDragging() && v instanceof BubbleButton) {
-            if (!((BubbleButton) v).hasPerformedLongPress()) {
-                if (((BubbleButton) v).getBelongTo() == BubbleButton.BelongTo.FunctionList) {
+        if (!mDragController.isDragging() && v instanceof BubbleTextView) {
+            if (!((BubbleTextView) v).hasPerformedLongPress()) {
+                if (((BubbleTextView) v).getBelongTo() == BubbleTextView.BelongTo.FunctionList) {
                     mDragController.quickMove(v, functionListLayout, mHotseat, v.getTag());
                 }
             }

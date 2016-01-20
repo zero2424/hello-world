@@ -1,7 +1,6 @@
 package com.example.kaizhang.kaiapplication.layout;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Rect;
@@ -9,15 +8,16 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 
 import com.example.kaizhang.kaiapplication.R;
 import com.example.kaizhang.kaiapplication.controller.DragController;
-import com.example.kaizhang.kaiapplication.drag_interface.BubbleButton;
 import com.example.kaizhang.kaiapplication.drag_interface.DragSource;
 import com.example.kaizhang.kaiapplication.drag_interface.DropTarget;
+import com.example.kaizhang.kaiapplication.drag_interface.widget.BubbleTextView;
 import com.example.kaizhang.kaiapplication.modle.CellInfo;
 import com.example.kaizhang.kaiapplication.modle.FunctionInfo;
 import com.example.kaizhang.kaiapplication.utils.DatabaseSingleInstance;
@@ -43,6 +43,7 @@ public class Hotseat extends FrameLayout implements DropTarget, DragSource, Drag
     private boolean deleteMode;
     private List<Point> grids;
     private final int COLUMN = 4;
+    private LayoutInflater mInflater;
 
     public Hotseat(Context context) {
         this(context, null);
@@ -61,6 +62,7 @@ public class Hotseat extends FrameLayout implements DropTarget, DragSource, Drag
     private void init() {
         mDatas = new TreeSet<>(new FunctionInfoHotseatComparator());
         grids = new ArrayList<>();
+        mInflater = LayoutInflater.from(mContext);
     }
 
     public void setDatas(List<FunctionInfo> datas) {
@@ -98,7 +100,7 @@ public class Hotseat extends FrameLayout implements DropTarget, DragSource, Drag
         Iterator<FunctionInfo> iterator = mDatas.iterator();
         for (int i = 0; iterator.hasNext(); i++) {
             FunctionInfo functionInfo = iterator.next();
-            BubbleButton function = addNewButton(functionInfo, i);
+            BubbleTextView function = addNewButton(functionInfo, i);
             addView(function);
         }
     }
@@ -203,17 +205,17 @@ public class Hotseat extends FrameLayout implements DropTarget, DragSource, Drag
         return null;
     }
 
-    private BubbleButton addNewButton(FunctionInfo functionInfo, int index) {
+    private BubbleTextView addNewButton(FunctionInfo functionInfo, int index) {
         int standardMargin = mDragLayer.standardMargin;
         int functionSize = mDragLayer.functionSize;
         String funcName = functionInfo.getTitle();
-        BubbleButton function = new BubbleButton(getContext());
-        function.setTag(new CellInfo(function, functionInfo));
-        function.setBelongTo(BubbleButton.BelongTo.Hotseat);
-        function.setBackgroundResource(R.drawable.function_icon);
-        function.setTextColor(Color.WHITE);
-        function.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
-        function.setText(funcName);
+        BubbleTextView function = (BubbleTextView) mInflater.inflate(R.layout.function_icon, this, false);
+        function.applyFromShortcutInfo(new CellInfo(function, functionInfo, getResources().getDrawable(R.drawable.ic_launcher)));
+        function.setBelongTo(BubbleTextView.BelongTo.Hotseat);
+//        function.setBackgroundResource(R.drawable.function_icon);
+//        function.setTextColor(Color.WHITE);
+//        function.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
+//        function.setText(funcName);
         function.setGravity(Gravity.CENTER);
         function.setOnLongClickListener(mOnLongClickListener);
         function.setOnClickListener(mOnClickListener);

@@ -50,6 +50,7 @@ import android.widget.ImageView;
 
 import com.example.kaizhang.kaiapplication.R;
 import com.example.kaizhang.kaiapplication.drag_interface.FastBitmapDrawable;
+import com.example.kaizhang.kaiapplication.drag_interface.widget.BubbleTextView;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -300,7 +301,7 @@ public final class Utilities {
                 localY < (v.getHeight() + slop);
     }
 
-    private static void initStatics(Context context) {
+    public static void initStatics(Context context) {
         final Resources resources = context.getResources();
         sIconWidth = sIconHeight = (int) resources.getDimension(R.dimen.app_icon_size);
     }
@@ -536,6 +537,11 @@ public final class Utilities {
     }
 
     public static Bitmap getBitmapFromView(View view) {
+        if (view instanceof BubbleTextView) {
+            BubbleTextView textView = (BubbleTextView) view;
+            Bitmap bitmap = ((FastBitmapDrawable) textView.getCompoundDrawables()[1]).getBitmap();
+            return bitmap;
+        }
         Bitmap bitmap = null;
         try {
             int width = view.getWidth();

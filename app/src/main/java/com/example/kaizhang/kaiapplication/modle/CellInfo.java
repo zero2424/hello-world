@@ -1,5 +1,6 @@
 package com.example.kaizhang.kaiapplication.modle;
 
+import android.graphics.drawable.Drawable;
 import android.view.View;
 
 /**
@@ -14,10 +15,12 @@ public class CellInfo {
     int spanY;
     long screenId;
     long container;
+    private Drawable drawable;
 
-    public CellInfo(View v, FunctionInfo info) {
+    public CellInfo(View v, FunctionInfo info, Drawable drawable) {
         cell = v;
         functionInfo = info;
+        this.drawable = drawable;
     }
 
     public View getCell() {
@@ -34,5 +37,13 @@ public class CellInfo {
 
     public void setFunctionInfo(FunctionInfo functionInfo) {
         this.functionInfo = functionInfo;
+    }
+
+    public Drawable getDrawable() {
+        return drawable;
+    }
+
+    public void setDrawable(Drawable drawable) {
+        this.drawable = drawable;
     }
 }

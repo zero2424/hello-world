@@ -7,6 +7,7 @@ import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,9 +17,9 @@ import android.widget.TextView;
 
 import com.example.kaizhang.kaiapplication.R;
 import com.example.kaizhang.kaiapplication.controller.DragController;
-import com.example.kaizhang.kaiapplication.drag_interface.BubbleButton;
 import com.example.kaizhang.kaiapplication.drag_interface.DragSource;
 import com.example.kaizhang.kaiapplication.drag_interface.DropTarget;
+import com.example.kaizhang.kaiapplication.drag_interface.widget.BubbleTextView;
 import com.example.kaizhang.kaiapplication.modle.CellInfo;
 import com.example.kaizhang.kaiapplication.modle.FunctionInfo;
 import com.example.kaizhang.kaiapplication.utils.DatabaseSingleInstance;
@@ -42,6 +43,7 @@ public class FunctionListLayout extends FrameLayout implements DropTarget, DragS
     private OnLongClickListener mOnLongClickListener;
     private OnClickListener mOnClickListener;
     private DragLayer mDragLayer;
+    private LayoutInflater mInflater;
 
     public FunctionListLayout(Context context) {
         this(context, null);
@@ -59,6 +61,7 @@ public class FunctionListLayout extends FrameLayout implements DropTarget, DragS
 
     private void init() {
         mDatas = new LinkedHashMap<>();
+        mInflater = LayoutInflater.from(mContext);
     }
 
     public void setDatas(List<FunctionInfo> datas) {
@@ -141,15 +144,15 @@ public class FunctionListLayout extends FrameLayout implements DropTarget, DragS
             }
             Iterator<FunctionInfo> elementIterator = entry.getValue().iterator();
             for (int j = 0; elementIterator.hasNext(); j++) {
-                FunctionInfo functionInfo =elementIterator.next();
+                FunctionInfo functionInfo = elementIterator.next();
                 String funcName = functionInfo.getTitle();
-                BubbleButton function = new BubbleButton(getContext());
-                function.setTag(new CellInfo(function, functionInfo));
-                function.setBelongTo(BubbleButton.BelongTo.FunctionList);
-                function.setBackgroundResource(R.drawable.function_icon);
-                function.setTextColor(Color.WHITE);
-                function.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
-                function.setText(funcName);
+                BubbleTextView function = (BubbleTextView) mInflater.inflate(R.layout.function_icon, this, false);
+                function.applyFromShortcutInfo(new CellInfo(function, functionInfo, getResources().getDrawable(R.drawable.ic_launcher)));
+                function.setBelongTo(BubbleTextView.BelongTo.FunctionList);
+//                function.setBackgroundResource(R.drawable.function_icon);
+//                function.setTextColor(Color.WHITE);
+//                function.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
+//                function.setText(funcName);
                 function.setId(functionId + i + j);
                 function.setGravity(Gravity.CENTER);
                 function.setOnLongClickListener(mOnLongClickListener);
@@ -162,13 +165,13 @@ public class FunctionListLayout extends FrameLayout implements DropTarget, DragS
         }
     }
 
-    private BubbleButton findChildByFunctionInfo(FunctionInfo functionInfo) {
+    private BubbleTextView findChildByFunctionInfo(FunctionInfo functionInfo) {
         for (int i = 0; i < getChildCount(); i++) {
             View view = getChildAt(i);
-            if (view instanceof BubbleButton) {
+            if (view instanceof BubbleTextView) {
                 CellInfo cellInfo = (CellInfo) view.getTag();
                 if (cellInfo.getFunctionInfo() == functionInfo) {
-                    return (BubbleButton) view;
+                    return (BubbleTextView) view;
                 }
             }
         }
