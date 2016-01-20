@@ -248,7 +248,7 @@ public class DragLayer extends FrameLayout {
 
         toX += ((FrameLayout.LayoutParams) targetChild.getLayoutParams()).leftMargin - ((FrameLayout.LayoutParams) child.getLayoutParams()).leftMargin;
         toY += ((FrameLayout.LayoutParams) targetChild.getLayoutParams()).topMargin - ((FrameLayout.LayoutParams) child.getLayoutParams()).topMargin;
-        if (child.getParent().getParent() instanceof ScrollView) {
+        if (child.getParent() != null && child.getParent().getParent() instanceof ScrollView) {
             ScrollView scrollView = (ScrollView) child.getParent().getParent();
             int scrollY = scrollView.getScrollY();
             if (!fixPosition) {

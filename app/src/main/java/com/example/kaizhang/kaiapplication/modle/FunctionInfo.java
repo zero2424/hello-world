@@ -10,13 +10,15 @@ public class FunctionInfo {
     private boolean isInHotseat;
     private int functionType;
     private int orderInHotseat;
+    private int orderInFunctionListLayout;
 
-    public FunctionInfo(long _id, String title, boolean isInHotseat, int functionType, int orderInHotseat) {
+    public FunctionInfo(long _id, String title, boolean isInHotseat, int functionType, int orderInHotseat, int orderInFunctionListLayout) {
         this._id = _id;
         this.title = title;
         this.isInHotseat = isInHotseat;
         this.functionType = functionType;
         this.orderInHotseat = orderInHotseat;
+        this.orderInFunctionListLayout = orderInFunctionListLayout;
     }
 
     public long getId() {
@@ -59,9 +61,17 @@ public class FunctionInfo {
         this.orderInHotseat = orderInHotseat;
     }
 
+    public int getOrderInFunctionListLayout() {
+        return orderInFunctionListLayout;
+    }
+
+    public void setOrderInFunctionListLayout(int orderInFunctionListLayout) {
+        this.orderInFunctionListLayout = orderInFunctionListLayout;
+    }
+
     @Override
     public Object clone() throws CloneNotSupportedException {
-        FunctionInfo functionInfo = new FunctionInfo(_id, title, isInHotseat, functionType, orderInHotseat);
+        FunctionInfo functionInfo = new FunctionInfo(_id, title, isInHotseat, functionType, orderInHotseat, orderInFunctionListLayout);
         return functionInfo;
     }
 
@@ -76,6 +86,7 @@ public class FunctionInfo {
         public static final String ISINHOTSEAT = "isInHotseat";
         public static final String FUNCTIONTYPE = "functionType";
         public static final String ORDERINHOTSEAT = "orderInHotseat";
+        public static final String ORDERINFUNCTIONLISTLAYOUT = "orderInFunctionListLayout";
 
         public static final int RemoteControl = 0;
         public static final int VehicleState = 1;

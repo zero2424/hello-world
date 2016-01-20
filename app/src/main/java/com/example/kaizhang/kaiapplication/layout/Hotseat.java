@@ -2,6 +2,7 @@ package com.example.kaizhang.kaiapplication.layout;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.util.AttributeSet;
@@ -21,9 +22,12 @@ import com.example.kaizhang.kaiapplication.modle.CellInfo;
 import com.example.kaizhang.kaiapplication.modle.FunctionInfo;
 import com.example.kaizhang.kaiapplication.utils.DatabaseSingleInstance;
 
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeSet;
 
 /**
@@ -37,6 +41,8 @@ public class Hotseat extends FrameLayout implements DropTarget, DragSource, Drag
     private OnClickListener mOnClickListener;
     private DragLayer mDragLayer;
     private boolean deleteMode;
+    private List<Point> grids;
+    private final int COLUMN = 4;
 
     public Hotseat(Context context) {
         this(context, null);
@@ -53,7 +59,8 @@ public class Hotseat extends FrameLayout implements DropTarget, DragSource, Drag
     }
 
     private void init() {
-        mDatas = new TreeSet<>(new FunctionInfoComparator());
+        mDatas = new TreeSet<>(new FunctionInfoHotseatComparator());
+        grids = new ArrayList<>();
     }
 
     public void setDatas(List<FunctionInfo> datas) {
@@ -84,6 +91,7 @@ public class Hotseat extends FrameLayout implements DropTarget, DragSource, Drag
     private void initChildren() {
         if (mDatas == null)
             return;
+        grids.clear();
         mDragLayer = (DragLayer) getParent();
         removeAllViews();
         startH = mDragLayer.startH;
@@ -95,13 +103,104 @@ public class Hotseat extends FrameLayout implements DropTarget, DragSource, Drag
         }
     }
 
-    private void rearrange() {
+    private void reIndex() {
         Iterator<FunctionInfo> iterator = mDatas.iterator();
         for (int i = 0; iterator.hasNext(); i++) {
             FunctionInfo functionInfo = iterator.next();
             functionInfo.setOrderInHotseat(i);
             DatabaseSingleInstance.getInstance().getDatabaseHelper(getContext()).update(functionInfo);
         }
+    }
+
+    private void reSort(int newOrder, int oldOrder) {
+        if (newOrder == oldOrder) {
+            return;
+        }
+        Iterator<FunctionInfo> iterator = mDatas.iterator();
+        Map<FunctionInfo, Integer> functionInfoIntegerHashMap = new HashMap<FunctionInfo, Integer>();
+        for (; iterator.hasNext(); ) {
+            FunctionInfo functionInfo = iterator.next();
+            if (functionInfo.getOrderInHotseat() == oldOrder) {
+                functionInfoIntegerHashMap.put(functionInfo, newOrder);
+                continue;
+            }
+            if (newOrder > oldOrder) {
+                if (functionInfo.getOrderInHotseat() > oldOrder && functionInfo.getOrderInHotseat() <= newOrder) {
+                    functionInfoIntegerHashMap.put(functionInfo, functionInfo.getOrderInHotseat() - 1);
+                }
+            } else {
+                if (functionInfo.getOrderInHotseat() >= newOrder && functionInfo.getOrderInHotseat() < oldOrder) {
+                    functionInfoIntegerHashMap.put(functionInfo, functionInfo.getOrderInHotseat() + 1);
+                }
+            }
+        }
+        mDatas.removeAll(functionInfoIntegerHashMap.keySet());
+        Iterator<Map.Entry<FunctionInfo, Integer>> infoIntegerIterator = functionInfoIntegerHashMap.entrySet().iterator();
+        for (; infoIntegerIterator.hasNext(); ) {
+            Map.Entry<FunctionInfo, Integer> map = infoIntegerIterator.next();
+            map.getKey().setOrderInHotseat(map.getValue());
+            DatabaseSingleInstance.getInstance().getDatabaseHelper(getContext()).update(map.getKey());
+            mDatas.add(map.getKey());
+        }
+    }
+
+    private int figureOutOrderFromPosition(float targetX, float targetY, float originX, float originY) {
+        int onePiece = mDragLayer.functionSize + 2 * mDragLayer.standardMargin;
+        float diffX = targetX - originX;
+        float diffY = targetY - originY;
+        if (Math.abs(diffX) <= onePiece && Math.abs(diffY) <= onePiece) {
+            return -1;
+        }
+        int horizontalGrid = grids.size() < COLUMN ? grids.size() : COLUMN;
+        int gridX = -1;
+        for (int i = 0; i < horizontalGrid; i++) {
+            if (grids.get(i).x >= targetX) {
+                if (targetX - originX > 0) {
+                    gridX = i - 1;
+                    break;
+                } else {
+                    gridX = i;
+                    break;
+                }
+            }
+        }
+        if (targetX - originX > 0 && gridX == -1) {
+            gridX = horizontalGrid - 1;
+        }
+        int gridY = -1;
+        int rowNum = grids.size() / COLUMN + (grids.size() % COLUMN != 0 ? 1 : 0);
+        for (int i = 0; i < rowNum; i++) {
+            if (grids.get(COLUMN * i).y >= targetY) {
+                if (targetY - originY > 0) {
+                    gridY = i - 1;
+                    break;
+                } else {
+                    gridY = i;
+                    break;
+                }
+            }
+        }
+        if (targetY - originY > 0 && gridY == -1) {
+            gridY = grids.size() != COLUMN ? rowNum - 1 : rowNum;
+        }
+        int result = gridX + gridY * COLUMN;
+        result = result > grids.size() - 1 ? grids.size() - 1 : result;
+        Point point = new Point((int) originX, (int) originY);
+        if (grids.indexOf(point) == result) {
+            result = -1;
+        }
+        return result;
+    }
+
+    private FunctionInfo getFunctionInfoFromOrder(int order) {
+        Iterator<FunctionInfo> infoIterator = mDatas.iterator();
+        while (infoIterator.hasNext()) {
+            FunctionInfo functionInfo = infoIterator.next();
+            if (functionInfo.getOrderInHotseat() == order) {
+                return functionInfo;
+            }
+        }
+        return null;
     }
 
     private BubbleButton addNewButton(FunctionInfo functionInfo, int index) {
@@ -122,6 +221,8 @@ public class Hotseat extends FrameLayout implements DropTarget, DragSource, Drag
         functionParams.setMargins(standardMargin + index % 4 * (2 * standardMargin + functionSize), startH + standardMargin + index / 4 * (functionSize + standardMargin), 0, standardMargin);
         Log.i("zk", "functionParams leftMargin" + functionParams.leftMargin + ",functionParams topMargin" + functionParams.topMargin);
         function.setLayoutParams(functionParams);
+        Point point = new Point(functionParams.leftMargin, functionParams.topMargin);
+        grids.add(point);
         return function;
     }
 
@@ -183,11 +284,10 @@ public class Hotseat extends FrameLayout implements DropTarget, DragSource, Drag
         FunctionInfo functionInfo = cellInfo.getFunctionInfo();
         if (success && target instanceof FunctionListLayout && mDatas.contains(functionInfo)) {
             mDatas.remove(functionInfo);
-            rearrange();
+            reIndex();
             initChildren();
         } else {
-            mDragLayer.animateViewIntoPosition(d.dragView, cellInfo.getCell(), -1,
-                    null, this);
+
         }
     }
 
@@ -199,28 +299,49 @@ public class Hotseat extends FrameLayout implements DropTarget, DragSource, Drag
     @Override
     public void onDrop(DragObject dragObject) {
         CellInfo cellInfo = (CellInfo) dragObject.dragInfo;
-        final FunctionInfo functionInfo;
-        try {
-            functionInfo = (FunctionInfo) cellInfo.getFunctionInfo().clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-            return;
-        }
-        View cell = cellInfo.getCell();
-        functionInfo.setOrderInHotseat(mDatas.size());
-        functionInfo.setIsInHotseat(true);
-        DatabaseSingleInstance.getInstance().getDatabaseHelper(getContext()).update(functionInfo);
-        View newCell = addNewButton(functionInfo, mDatas.size());
-        newCell.setVisibility(INVISIBLE);
-        addView(newCell);
-        mDatas.add(functionInfo);
-        final Runnable onCompleteRunnable = new Runnable() {
-            @Override
-            public void run() {
+        FunctionInfo originFunctionInfo = cellInfo.getFunctionInfo();
+        if (originFunctionInfo.isInHotseat()) {
+            View cell = cellInfo.getCell();
+            LayoutParams layoutParams = (LayoutParams) cell.getLayoutParams();
+            float dx = dragObject.dragView.getX();
+            float dy = dragObject.dragView.getY();
+            int newOrder = figureOutOrderFromPosition(dx, dy, layoutParams.leftMargin, layoutParams.topMargin);
+            if (newOrder == -1) {//no change
+                mDragLayer.animateViewIntoPosition(dragObject.dragView, cell, -1,
+                        null, this);
+            } else {
+                reSort(newOrder, originFunctionInfo.getOrderInHotseat());
+                initChildren();
+                Log.i("zk", "mDatas=" + mDatas);
+                Log.i("zk", "dx=" + dx + ",dy=" + dy + ",layoutParams.leftMargin" + layoutParams.leftMargin + ",layoutParams.topMargin" + layoutParams.topMargin);
+                mDragLayer.animateViewIntoPosition(dragObject.dragView, cell, getChildAt(newOrder), -1,
+                        null, this);
             }
-        };
-        mDragLayer.animateViewIntoPosition(dragObject.dragView, cell, newCell, -1,
-                onCompleteRunnable, this);
+
+        } else {
+            final FunctionInfo functionInfo;
+            try {
+                functionInfo = (FunctionInfo) cellInfo.getFunctionInfo().clone();
+            } catch (CloneNotSupportedException e) {
+                e.printStackTrace();
+                return;
+            }
+            View cell = cellInfo.getCell();
+            functionInfo.setOrderInHotseat(mDatas.size());
+            functionInfo.setIsInHotseat(true);
+            DatabaseSingleInstance.getInstance().getDatabaseHelper(getContext()).update(functionInfo);
+            View newCell = addNewButton(functionInfo, mDatas.size());
+            newCell.setVisibility(INVISIBLE);
+            addView(newCell);
+            mDatas.add(functionInfo);
+            final Runnable onCompleteRunnable = new Runnable() {
+                @Override
+                public void run() {
+                }
+            };
+            mDragLayer.animateViewIntoPosition(dragObject.dragView, cell, newCell, -1,
+                    onCompleteRunnable, this);
+        }
     }
 
     @Override
@@ -243,14 +364,8 @@ public class Hotseat extends FrameLayout implements DropTarget, DragSource, Drag
     @Override
     public boolean acceptDrop(DragObject dragObject) {
         CellInfo cellInfo = (CellInfo) dragObject.dragInfo;
-        FunctionInfo functionInfo;
-        try {
-            functionInfo = (FunctionInfo) cellInfo.getFunctionInfo().clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-            return false;
-        }
-        if (!functionInfo.isInHotseat() && mDatas.size() < 8 && dragObject.dragSource instanceof FunctionListLayout) {
+        FunctionInfo functionInfo = cellInfo.getFunctionInfo();
+        if (functionInfo.isInHotseat() || (mDatas.size() < 8 && dragObject.dragSource instanceof FunctionListLayout)) {
             return true;
         }
         return false;
@@ -267,7 +382,7 @@ public class Hotseat extends FrameLayout implements DropTarget, DragSource, Drag
 
     }
 
-    private class FunctionInfoComparator implements Comparator<FunctionInfo> {
+    private class FunctionInfoHotseatComparator implements Comparator<FunctionInfo> {
         @Override
         public int compare(FunctionInfo lhs, FunctionInfo rhs) {
             return lhs.getOrderInHotseat() - rhs.getOrderInHotseat();

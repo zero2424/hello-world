@@ -24,7 +24,7 @@ public class ScrollTextActivity extends Activity implements MultiPartSwitcher.Sw
         switcher = (MultiPartSwitcher) findViewById(R.id.switcher);
         switcher.setItemLayoutId(R.layout.main_home_short_info_item);
         switcher.setSwitherListener(this);
-        initShortInfoViews(new String[]{"1", "2", "3", "4"}, new String[]{"已体验天数", "呵呵", "1895", "23.2"});
+        initShortInfoViews(new String[]{"1", "2", "3"}, new String[]{"已体验天数", "呵呵", "1895"});
         Button eb = (Button) findViewById(R.id.es_btn);
         Button sm = (Button) findViewById(R.id.sm_btn);
         Button ec_btn = (Button) findViewById(R.id.ec_btn);

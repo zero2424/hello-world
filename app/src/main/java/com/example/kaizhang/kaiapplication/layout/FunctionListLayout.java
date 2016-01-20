@@ -23,11 +23,12 @@ import com.example.kaizhang.kaiapplication.modle.CellInfo;
 import com.example.kaizhang.kaiapplication.modle.FunctionInfo;
 import com.example.kaizhang.kaiapplication.utils.DatabaseSingleInstance;
 
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeSet;
 
 /**
  * Created by kai zhang on 2016/1/6.
@@ -35,7 +36,7 @@ import java.util.Map;
 public class FunctionListLayout extends FrameLayout implements DropTarget, DragSource, DragController.DragListener {
     private int titleId = 0x00001000;
     private int functionId = 0x00002000;
-    private LinkedHashMap<String, List<FunctionInfo>> mDatas;
+    private LinkedHashMap<String, TreeSet<FunctionInfo>> mDatas;
     private List<FunctionInfo> mRawDatas;
     private Context mContext;
     private OnLongClickListener mOnLongClickListener;
@@ -63,10 +64,10 @@ public class FunctionListLayout extends FrameLayout implements DropTarget, DragS
     public void setDatas(List<FunctionInfo> datas) {
         mRawDatas = datas;
         mDatas.clear();
-        mDatas.put(FunctionInfo.Favorites.getFunctionTypeDesc(FunctionInfo.Favorites.RemoteControl), new ArrayList<FunctionInfo>());
-        mDatas.put(FunctionInfo.Favorites.getFunctionTypeDesc(FunctionInfo.Favorites.VehicleState), new ArrayList<FunctionInfo>());
-        mDatas.put(FunctionInfo.Favorites.getFunctionTypeDesc(FunctionInfo.Favorites.Navigation), new ArrayList<FunctionInfo>());
-        mDatas.put(FunctionInfo.Favorites.getFunctionTypeDesc(FunctionInfo.Favorites.Other), new ArrayList<FunctionInfo>());
+        mDatas.put(FunctionInfo.Favorites.getFunctionTypeDesc(FunctionInfo.Favorites.RemoteControl), new TreeSet<FunctionInfo>(new FunctionInfoListComparator()));
+        mDatas.put(FunctionInfo.Favorites.getFunctionTypeDesc(FunctionInfo.Favorites.VehicleState), new TreeSet<FunctionInfo>(new FunctionInfoListComparator()));
+        mDatas.put(FunctionInfo.Favorites.getFunctionTypeDesc(FunctionInfo.Favorites.Navigation), new TreeSet<FunctionInfo>(new FunctionInfoListComparator()));
+        mDatas.put(FunctionInfo.Favorites.getFunctionTypeDesc(FunctionInfo.Favorites.Other), new TreeSet<FunctionInfo>(new FunctionInfoListComparator()));
         for (int i = 0; i < datas.size(); i++) {
             FunctionInfo functionInfo = datas.get(i);
             if (functionInfo.isInHotseat()) {
@@ -110,14 +111,14 @@ public class FunctionListLayout extends FrameLayout implements DropTarget, DragS
         mDragLayer = (DragLayer) getParent().getParent();
         int standardMargin = mDragLayer.standardMargin;
         removeAllViews();
-        Iterator<Map.Entry<String, List<FunctionInfo>>> iterator = mDatas.entrySet().iterator();
+        Iterator<Map.Entry<String, TreeSet<FunctionInfo>>> iterator = mDatas.entrySet().iterator();
         int functionSize = mDragLayer.functionSize;
         int titleHeight = (int) getDp(20);
         FrameLayout.LayoutParams functionParams = null;
         ScrollView scrollView = (ScrollView) getParent();
         scrollView.getLayoutParams().height = mDragLayer.startH;
         for (int i = 0; iterator.hasNext(); i++) {
-            Map.Entry<String, List<FunctionInfo>> entry = iterator.next();
+            Map.Entry<String, TreeSet<FunctionInfo>> entry = iterator.next();
             TextView titleTv = new TextView(getContext());
             titleTv.setTextColor(Color.WHITE);
             titleTv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
@@ -138,8 +139,9 @@ public class FunctionListLayout extends FrameLayout implements DropTarget, DragS
                 functionParams.topMargin = titleParams.topMargin + standardMargin + titleHeight - functionSize;
                 continue;
             }
-            for (int j = 0; j < entry.getValue().size(); j++) {
-                FunctionInfo functionInfo = entry.getValue().get(j);
+            Iterator<FunctionInfo> elementIterator = entry.getValue().iterator();
+            for (int j = 0; elementIterator.hasNext(); j++) {
+                FunctionInfo functionInfo =elementIterator.next();
                 String funcName = functionInfo.getTitle();
                 BubbleButton function = new BubbleButton(getContext());
                 function.setTag(new CellInfo(function, functionInfo));
@@ -314,5 +316,12 @@ public class FunctionListLayout extends FrameLayout implements DropTarget, DragS
     @Override
     public void onDragEnd() {
 
+    }
+
+    private class FunctionInfoListComparator implements Comparator<FunctionInfo> {
+        @Override
+        public int compare(FunctionInfo lhs, FunctionInfo rhs) {
+            return lhs.getOrderInFunctionListLayout() - rhs.getOrderInFunctionListLayout();
+        }
     }
 }

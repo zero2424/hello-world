@@ -38,7 +38,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "title TEXT," +
                 "isInHotseat INTEGER NOT NULL DEFAULT 0," +
                 "functionType INTEGER NOT NULL DEFAULT 0," +
-                "orderInHotseat INTEGER DEFAULT 0" +
+                "orderInHotseat INTEGER DEFAULT 0," +
+                "orderInFunctionListLayout INTEGER DEFAULT 0" +
                 ");");
         insertDatas(db);
     }
@@ -54,42 +55,58 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             ContentValues contentValues = new ContentValues();
             contentValues.put(FunctionInfo.Favorites.FUNCTIONTYPE, FunctionInfo.Favorites.RemoteControl);
             contentValues.put(FunctionInfo.Favorites.TITLE, "远程启动");
+            contentValues.put(FunctionInfo.Favorites.ORDERINFUNCTIONLISTLAYOUT, 0);
             db.insert(TABLE_FAVORITES, null, contentValues);
             contentValues.put(FunctionInfo.Favorites.TITLE, "取消启动");
+            contentValues.put(FunctionInfo.Favorites.ORDERINFUNCTIONLISTLAYOUT, 1);
             db.insert(TABLE_FAVORITES, null, contentValues);
-            contentValues.put(FunctionInfo.Favorites.TITLE, "远程锁门");
+            contentValues.put(FunctionInfo.Favorites.TITLE, "车门上锁");
+            contentValues.put(FunctionInfo.Favorites.ORDERINFUNCTIONLISTLAYOUT, 2);
             db.insert(TABLE_FAVORITES, null, contentValues);
-            contentValues.put(FunctionInfo.Favorites.TITLE, "闪灯鸣笛");
+            contentValues.put(FunctionInfo.Favorites.TITLE, "车门解锁");
+            contentValues.put(FunctionInfo.Favorites.ORDERINFUNCTIONLISTLAYOUT, 3);
+            db.insert(TABLE_FAVORITES, null, contentValues);
+            contentValues.put(FunctionInfo.Favorites.TITLE, "车辆闪灯鸣笛");
+            contentValues.put(FunctionInfo.Favorites.ORDERINFUNCTIONLISTLAYOUT, 4);
             db.insert(TABLE_FAVORITES, null, contentValues);
 
             contentValues.put(FunctionInfo.Favorites.FUNCTIONTYPE, FunctionInfo.Favorites.VehicleState);
             contentValues.put(FunctionInfo.Favorites.TITLE, "检测报告");
+            contentValues.put(FunctionInfo.Favorites.ORDERINFUNCTIONLISTLAYOUT, 0);
             db.insert(TABLE_FAVORITES, null, contentValues);
             contentValues.put(FunctionInfo.Favorites.TITLE, "经销商预约");
+            contentValues.put(FunctionInfo.Favorites.ORDERINFUNCTIONLISTLAYOUT, 1);
             db.insert(TABLE_FAVORITES, null, contentValues);
 
             contentValues.put(FunctionInfo.Favorites.FUNCTIONTYPE, FunctionInfo.Favorites.Navigation);
             contentValues.put(FunctionInfo.Favorites.TITLE, "实时路况");
+            contentValues.put(FunctionInfo.Favorites.ORDERINFUNCTIONLISTLAYOUT, 0);
             db.insert(TABLE_FAVORITES, null, contentValues);
             contentValues.put(FunctionInfo.Favorites.TITLE, "搜索兴趣点");
+            contentValues.put(FunctionInfo.Favorites.ORDERINFUNCTIONLISTLAYOUT, 1);
             db.insert(TABLE_FAVORITES, null, contentValues);
             contentValues.put(FunctionInfo.Favorites.TITLE, "电子围栏");
+            contentValues.put(FunctionInfo.Favorites.ORDERINFUNCTIONLISTLAYOUT, 2);
             db.insert(TABLE_FAVORITES, null, contentValues);
             contentValues.put(FunctionInfo.Favorites.TITLE, "一键回家");
+            contentValues.put(FunctionInfo.Favorites.ORDERINFUNCTIONLISTLAYOUT, 3);
+            db.insert(TABLE_FAVORITES, null, contentValues);
+            contentValues.put(FunctionInfo.Favorites.TITLE, "一键回公司");
+            contentValues.put(FunctionInfo.Favorites.ORDERINFUNCTIONLISTLAYOUT, 4);
             db.insert(TABLE_FAVORITES, null, contentValues);
 
             contentValues.put(FunctionInfo.Favorites.FUNCTIONTYPE, FunctionInfo.Favorites.Other);
-            contentValues.put(FunctionInfo.Favorites.TITLE, "我的客服");
+            contentValues.put(FunctionInfo.Favorites.TITLE, "联系安吉星");
+            contentValues.put(FunctionInfo.Favorites.ORDERINFUNCTIONLISTLAYOUT, 0);
             db.insert(TABLE_FAVORITES, null, contentValues);
             contentValues.put(FunctionInfo.Favorites.TITLE, "电话云助手");
+            contentValues.put(FunctionInfo.Favorites.ORDERINFUNCTIONLISTLAYOUT, 1);
             db.insert(TABLE_FAVORITES, null, contentValues);
             contentValues.put(FunctionInfo.Favorites.TITLE, "超级管家");
+            contentValues.put(FunctionInfo.Favorites.ORDERINFUNCTIONLISTLAYOUT, 2);
             db.insert(TABLE_FAVORITES, null, contentValues);
             contentValues.put(FunctionInfo.Favorites.TITLE, "驾驶行为");
-            db.insert(TABLE_FAVORITES, null, contentValues);
-            contentValues.put(FunctionInfo.Favorites.TITLE, "测试用例1");
-            db.insert(TABLE_FAVORITES, null, contentValues);
-            contentValues.put(FunctionInfo.Favorites.TITLE, "测试用例2");
+            contentValues.put(FunctionInfo.Favorites.ORDERINFUNCTIONLISTLAYOUT, 3);
             db.insert(TABLE_FAVORITES, null, contentValues);
             db.setTransactionSuccessful();
         } catch (Exception e) {
@@ -107,6 +124,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(FunctionInfo.Favorites.ISINHOTSEAT, functionInfo.isInHotseat());
         contentValues.put(FunctionInfo.Favorites.FUNCTIONTYPE, functionInfo.getFunctionType());
         contentValues.put(FunctionInfo.Favorites.ORDERINHOTSEAT, functionInfo.getOrderInHotseat());
+        contentValues.put(FunctionInfo.Favorites.ORDERINFUNCTIONLISTLAYOUT, functionInfo.getOrderInFunctionListLayout());
         return db.update(TABLE_FAVORITES, contentValues, FunctionInfo.Favorites.ID + " =?", new String[]{functionInfo.getId() + ""});
     }
 
@@ -118,7 +136,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         try {
             c = getReadableDatabase().query(TABLE_FAVORITES, null, null, null, null, null, null);
             while (c != null && c.moveToNext()) {
-                FunctionInfo functionInfo = new FunctionInfo(c.getLong(0), c.getString(1), c.getInt(2) != 0, c.getInt(3), c.getInt(4));
+                FunctionInfo functionInfo = new FunctionInfo(c.getLong(0), c.getString(1), c.getInt(2) != 0, c.getInt(3), c.getInt(4), c.getInt(5));
                 functionInfos.add(functionInfo);
             }
         } catch (Exception e) {
